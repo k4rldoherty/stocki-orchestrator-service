@@ -1,0 +1,6 @@
+@OrchestratorService_HostAddress = http://localhost:8082
+
+GET {{OrchestratorService_HostAddress}}/
+Accept: application/json
+
+###

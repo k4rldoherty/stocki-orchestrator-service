@@ -1,22 +1,30 @@
 using Microsoft.AspNetCore.Mvc;
-using OrchestratorService.Models;
+// using OrchestratorService.Models;
 using OrchestratorService.Services;
 
 namespace MyApp.Namespace
 {
-    [Route("api/")]
+    [Route("api/orchestrator")]
     [ApiController]
     public class StockDataController(StockDataService stockDataService) : ControllerBase
     {
-        [HttpGet("stock-info/{ticker}")]
-        public async Task<OrchestratorResponse> GetStockInfo(string ticker)
+        [HttpGet("stock-info-command/{ticker}")]
+        public async Task<IActionResult> GetStockInfo(string ticker)
         {
-            if (ticker is null)
+            if (string.IsNullOrWhiteSpace(ticker))
             {
-                return new OrchestratorResponse("Incorrect ticker", null);
+                return BadRequest("Invalid ticker");
             }
-            var res = await stockDataService.GetStockInfoAsync(ticker);
-            return res;
+
+            try
+            {
+                var stockInfoResponse = await stockDataService.GetStockInfoAsync(ticker);
+                return Ok(stockInfoResponse);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
     }
 }

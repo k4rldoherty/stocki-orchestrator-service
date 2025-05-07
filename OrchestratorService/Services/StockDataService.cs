@@ -3,7 +3,11 @@ using OrchestratorService.Models;
 
 namespace OrchestratorService.Services;
 
-public class StockDataService(IConfiguration cfg, HttpClient client)
+public class StockDataService(
+    IConfiguration cfg,
+    HttpClient client,
+    ILogger<StockDataService> logger
+)
 {
     private readonly string baseUrl =
         cfg.GetSection("StockDataService").Value
@@ -11,19 +15,60 @@ public class StockDataService(IConfiguration cfg, HttpClient client)
 
     public async Task<OrchestratorResponse> GetStockInfoAsync(string ticker)
     {
-        var url = baseUrl + "/get-stock-info" + "/ticker";
-        var res = await client.GetAsync(url);
-        var obj = JsonSerializer.Deserialize<StockDataServiceResponse>(
-            await res.Content.ReadAsStringAsync()
-        );
-        if (obj is null)
+        try
         {
-            return new OrchestratorResponse("Something went wrong retriving the data", null);
+            var url = $"{baseUrl}get-stock-info/{ticker.ToUpper()}";
+            var response = await client.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new OrchestratorResponse(
+                    $"Failed to retrieve stock info: {response.StatusCode}",
+                    null
+                );
+            }
+
+            // TODO: PROBLEM HERE WITH PARSING JSON DATA
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var stockDataServiceResponse = JsonSerializer.Deserialize<StockDataServiceResponse>(
+                await response.Content.ReadAsStreamAsync(),
+                options
+            );
+
+            if (stockDataServiceResponse is null)
+            {
+                logger.LogWarning("stockDataServiceResponse is null");
+                return new OrchestratorResponse(
+                    "Failed to deserialize stock data service response",
+                    null
+                );
+            }
+
+            if (stockDataServiceResponse.Data is null)
+            {
+                return new OrchestratorResponse(stockDataServiceResponse.Message, null);
+            }
+
+            var stockInfoObj = JsonSerializer.Deserialize<StockInfo>(
+                stockDataServiceResponse.Data.GetValueOrDefault()
+            );
+
+            return new OrchestratorResponse("Command Succeeded", stockInfoObj);
         }
-        if (obj.Data is null)
+        catch (HttpRequestException ex)
         {
-            return new OrchestratorResponse(obj.Message, null);
+            return new OrchestratorResponse($"Failed to retrieve stock info: {ex.Message}", null);
         }
-        return new OrchestratorResponse("Command Succeeded", null);
+        catch (JsonException ex)
+        {
+            return new OrchestratorResponse(
+                $"Failed to deserialize stock data: {ex.Message}",
+                null
+            );
+        }
+        catch (Exception ex)
+        {
+            return new OrchestratorResponse($"{ex.Message}", null);
+        }
     }
 }

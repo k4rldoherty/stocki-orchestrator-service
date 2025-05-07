@@ -5,22 +5,22 @@ namespace OrchestratorService.Models;
 public class StockInfo
 {
     [JsonPropertyName("Symbol")]
-    public required string Symbol { get; set; }
+    public string Symbol { get; set; } = string.Empty;
 
     [JsonPropertyName("AssetType")]
-    public required string AssetType { get; set; }
+    public string AssetType { get; set; } = string.Empty;
 
     [JsonPropertyName("Name")]
-    public required string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [JsonPropertyName("Description")]
-    public required string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     [JsonPropertyName("Sector")]
-    public required string Sector { get; set; }
+    public string Sector { get; set; } = string.Empty;
 
     [JsonPropertyName("Industry")]
-    public required string Industry { get; set; }
+    public string Industry { get; set; } = string.Empty;
 
     [JsonPropertyName("MarketCapitalization")]
     public decimal MarketCapitalization { get; set; }
@@ -80,19 +80,19 @@ public class StockInfo
     public decimal AnalystTargetPrice { get; set; }
 
     [JsonPropertyName("AnalystRatingStrongBuy")]
-    public required string AnalystRatingStrongBuy { get; set; }
+    public string AnalystRatingStrongBuy { get; set; } = string.Empty;
 
     [JsonPropertyName("AnalystRatingBuy")]
-    public required string AnalystRatingBuy { get; set; }
+    public string AnalystRatingBuy { get; set; } = string.Empty;
 
     [JsonPropertyName("AnalystRatingHold")]
-    public required string AnalystRatingHold { get; set; }
+    public string AnalystRatingHold { get; set; } = string.Empty;
 
     [JsonPropertyName("AnalystRatingSell")]
-    public required string AnalystRatingSell { get; set; }
+    public string AnalystRatingSell { get; set; } = string.Empty;
 
     [JsonPropertyName("AnalystRatingStrongSell")]
-    public required string AnalystRatingStrongSell { get; set; }
+    public string AnalystRatingStrongSell { get; set; } = string.Empty;
 
     [JsonPropertyName("TrailingPE")]
     public decimal TrailingPE { get; set; }

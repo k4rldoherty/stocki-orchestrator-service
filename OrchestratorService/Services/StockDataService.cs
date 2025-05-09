@@ -13,11 +13,14 @@ public class StockDataService(
         cfg.GetSection("StockDataService").Value
         ?? throw new NullReferenceException("Cannot get stock data base url");
 
-    public async Task<OrchestratorResponse> GetStockInfoAsync(string ticker)
+    public async Task<OrchestratorResponse> GetStockDataAsync(
+        string stockDataServiceEndpoint,
+        string ticker
+    )
     {
         try
         {
-            var url = $"{baseUrl}get-stock-info/{ticker.ToUpper()}";
+            var url = $"{baseUrl}{stockDataServiceEndpoint}/{ticker.ToUpper()}";
             var response = await client.GetAsync(url);
 
             if (!response.IsSuccessStatusCode)
@@ -28,12 +31,16 @@ public class StockDataService(
                 );
             }
 
-            // TODO: PROBLEM HERE WITH PARSING JSON DATA
+            var resStream = await response.Content.ReadAsStreamAsync();
+
+            if (resStream is null)
+                return new OrchestratorResponse("Failed to get data", null);
+
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var stockDataServiceResponse = JsonSerializer.Deserialize<StockDataServiceResponse>(
-                await response.Content.ReadAsStreamAsync(),
-                options
-            );
+
+            dynamic? stockDataServiceResponse = await JsonSerializer.DeserializeAsync<
+                Dictionary<string, dynamic>
+            >(resStream, options);
 
             if (stockDataServiceResponse is null)
             {
@@ -44,16 +51,7 @@ public class StockDataService(
                 );
             }
 
-            if (stockDataServiceResponse.Data is null)
-            {
-                return new OrchestratorResponse(stockDataServiceResponse.Message, null);
-            }
-
-            var stockInfoObj = JsonSerializer.Deserialize<StockInfo>(
-                stockDataServiceResponse.Data.GetValueOrDefault()
-            );
-
-            return new OrchestratorResponse("Command Succeeded", stockInfoObj);
+            return new OrchestratorResponse("Command Succeeded", stockDataServiceResponse);
         }
         catch (HttpRequestException ex)
         {

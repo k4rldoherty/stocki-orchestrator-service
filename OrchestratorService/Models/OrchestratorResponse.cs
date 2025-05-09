@@ -2,8 +2,8 @@ namespace OrchestratorService.Models;
 
 public class OrchestratorResponse
 {
-    private string Message;
-    private object? Data;
+    public string Message { get; }
+    public object? Data { get; }
 
     public OrchestratorResponse(string message, object? data)
     {

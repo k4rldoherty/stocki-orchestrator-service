@@ -7,15 +7,14 @@
 ```/slash-commands/news ```
 
 ```/slash-commands/price-data ```
-```
 
 - The api returns an object like this.
 
-```
+```csharp 
 {
   message: string,
   data: object
-}
+} 
 ```
 
 - All these commands take a query param of ticker which is the ticker passed into the client.

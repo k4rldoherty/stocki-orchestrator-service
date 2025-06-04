@@ -4,12 +4,12 @@ using OrchestratorService.Services;
 
 namespace OrchestratorService.Controllers;
 
-[Route("api/orchestrator")]
+[Route("api/v1/slash-commands")]
 [ApiController]
 public class StockDataController(StockDataService stockDataService) : ControllerBase
 {
-    [HttpGet("stock-info-command/{ticker}")]
-    public async Task<IActionResult> GetStockInfo(string ticker)
+    [HttpGet("info")]
+    public async Task<IActionResult> GetStockInfo([FromQuery] string ticker)
     {
         if (string.IsNullOrWhiteSpace(ticker))
             return BadRequest("Invalid ticker");
@@ -20,7 +20,7 @@ public class StockDataController(StockDataService stockDataService) : Controller
         try
         {
             OrchestratorResponse Response = await stockDataService.GetStockDataAsync(
-                "get-stock-info",
+                $"stock-info?ticker={ticker.ToUpper()}",
                 ticker
             );
             if (Response.Data is null)
@@ -33,8 +33,8 @@ public class StockDataController(StockDataService stockDataService) : Controller
         }
     }
 
-    [HttpGet("stock-news-command/{ticker}")]
-    public async Task<IActionResult> GetStockNews(string ticker)
+    [HttpGet("news")]
+    public async Task<IActionResult> GetStockNews([FromQuery] string ticker)
     {
         if (string.IsNullOrWhiteSpace(ticker))
             return BadRequest("Invalid ticker");
@@ -45,7 +45,7 @@ public class StockDataController(StockDataService stockDataService) : Controller
         try
         {
             OrchestratorResponse Response = await stockDataService.GetStockDataAsync(
-                "get-stock-news",
+                $"stock-news?ticker={ticker.ToUpper()}",
                 ticker
             );
             if (Response.Data is null)
@@ -58,8 +58,8 @@ public class StockDataController(StockDataService stockDataService) : Controller
         }
     }
 
-    [HttpGet("stock-price-data-command/{ticker}")]
-    public async Task<IActionResult> GetStockPriceData(string ticker)
+    [HttpGet("price-data")]
+    public async Task<IActionResult> GetStockPriceData([FromQuery] string ticker)
     {
         if (string.IsNullOrWhiteSpace(ticker))
             return BadRequest("Invalid ticker");
@@ -70,7 +70,7 @@ public class StockDataController(StockDataService stockDataService) : Controller
         try
         {
             OrchestratorResponse Response = await stockDataService.GetStockDataAsync(
-                "get-stock-price-data",
+                $"stock-price-data?ticker={ticker.ToUpper()}",
                 ticker
             );
             if (Response.Data is null)

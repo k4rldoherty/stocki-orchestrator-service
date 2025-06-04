@@ -5,12 +5,12 @@ namespace OrchestratorService.Models;
 
 public class StockDataServiceResponse
 {
-    [JsonPropertyName("StatusCode")]
+    [JsonPropertyName("statusCode")]
     public required int StatusCode;
 
-    [JsonPropertyName("Message")]
+    [JsonPropertyName("message")]
     public required string Message;
 
-    [JsonPropertyName("Data")]
+    [JsonPropertyName("data")]
     public JsonElement? Data;
 }

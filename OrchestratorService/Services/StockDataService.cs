@@ -10,7 +10,7 @@ public class StockDataService(
 )
 {
     private readonly string baseUrl =
-        cfg.GetSection("StockDataService").Value
+        cfg.GetSection("StockDataServiceBaseURL").Value
         ?? throw new NullReferenceException("Cannot get stock data base url");
 
     public async Task<OrchestratorResponse> GetStockDataAsync(
@@ -20,9 +20,8 @@ public class StockDataService(
     {
         try
         {
-            var url = $"{baseUrl}{stockDataServiceEndpoint}/{ticker.ToUpper()}";
+            var url = $"{baseUrl}{stockDataServiceEndpoint}";
             var response = await client.GetAsync(url);
-
             if (!response.IsSuccessStatusCode)
             {
                 return new OrchestratorResponse(

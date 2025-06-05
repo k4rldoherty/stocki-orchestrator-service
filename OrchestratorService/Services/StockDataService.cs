@@ -24,6 +24,7 @@ public class StockDataService(
             var response = await client.GetAsync(url);
             if (!response.IsSuccessStatusCode)
             {
+                logger.LogWarning("Invalid request");
                 return new OrchestratorResponse(
                     $"Failed to retrieve stock info: {response.StatusCode}",
                     null

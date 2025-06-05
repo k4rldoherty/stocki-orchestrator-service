@@ -6,7 +6,7 @@ namespace OrchestratorService.Controllers;
 
 [Route("api/v1/slash-commands")]
 [ApiController]
-public class StockDataController(StockDataService stockDataService) : ControllerBase
+public class SlashCommandsController(StockDataService stockDataService) : ControllerBase
 {
     [HttpGet("info")]
     public async Task<IActionResult> GetStockInfo([FromQuery] string ticker)
